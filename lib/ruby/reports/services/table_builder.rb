@@ -2,7 +2,7 @@ require 'facets/hash/rekey'
 require 'iron/dsl'
 
 # coding: utf-8
-# Resque namespace
+# Ruby namespace
 module Ruby
   # Resque::Reports namespace
   module Reports
@@ -15,11 +15,7 @@ module Ruby
           init_table
         end
 
-        def encoded_string(obj)
-          obj.to_s.encode(config.encoding, invalid: :replace, undef: :replace)
-        end
-
-        def column(name, value, options = {})
+        def column(name, value = nil, options = {})
           if (skip_if = options.delete(:skip_if))
             if skip_if.is_a?(Symbol)
               return if report.send(skip_if)
@@ -28,7 +24,27 @@ module Ruby
             end
           end
 
-          building_header ? add_column_header(name) : add_column_cell(value, options)
+          building_header ? add_header_cell(name) : add_row_cell(value, options)
+        end
+
+        def build_row(row)
+          @row = row.is_a?(Hash) ? row.rekey! : row
+          row = DslProxy.exec(self, @row, &table_block)
+          cleanup_row
+          row
+        end
+
+        def build_header
+          @building_header = true
+          header = DslProxy.exec(self, Dummy.new, &table_block)
+          @building_header = false
+          header
+        end
+
+        private
+
+        def encoded_string(obj)
+          obj.to_s.encode(config.encoding, invalid: :replace, undef: :replace)
         end
 
         def init_table
@@ -40,32 +56,18 @@ module Ruby
           @table_row = []
         end
 
-        def add_column_header(column_name)
+        def add_header_cell(column_name)
           @table_header << encoded_string(column_name)
         end
 
-        def add_column_cell(column_value, options = {})
-          column_value = @row_object[column_value] if column_value.is_a? Symbol
+        def add_row_cell(column_value, options = {})
+          column_value = @row[column_value] if column_value.is_a? Symbol
 
           if (formatter_name = options[:formatter])
             column_value = report.formatter.send(formatter_name, column_value)
           end
 
           @table_row << encoded_string(column_value)
-        end
-
-        def build_row(row_object)
-          @row_object = row_object.is_a?(Hash) ? row_object.rekey! : row_object
-          row = DslProxy.exec(self, @row_object, &table_block)
-          cleanup_row
-          row
-        end
-
-        def build_header
-          @building_header = true
-          header = DslProxy.exec(self, Dummy.new, &table_block)
-          @building_header = false
-          header
         end
 
         class Dummy

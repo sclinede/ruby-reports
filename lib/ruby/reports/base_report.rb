@@ -101,6 +101,7 @@ module Ruby
 
       def initialize(*args)
         @args = args
+        assign_attributes
       end
 
       # Builds report synchronously
@@ -124,6 +125,12 @@ module Ruby
       end
 
       private
+
+      def assign_attributes
+        if args && (attrs_hash = args.first) && attrs_hash.is_a?(Hash)
+          attrs_hash.each { |name, value| instance_variable_set("@#{name}", value) }
+        end
+      end
 
       def query
         # descendant of QueryBuilder or SqlQuery with #take_batch(limit, offset) method defined

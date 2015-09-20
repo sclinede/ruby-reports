@@ -1,3 +1,6 @@
+require 'digest'
+require 'json'
+
 # coding: utf-8
 module Ruby
   module Reports

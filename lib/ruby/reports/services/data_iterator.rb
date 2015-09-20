@@ -7,7 +7,7 @@ module Ruby
           @custom_source = query.send(config.source) if config.source
         end
 
-        def iterate_data_source
+        def iterate_custom_source
           custom_source.each do |row|
             yield row
           end
@@ -16,7 +16,7 @@ module Ruby
         #
         # Returns Nothing
         def data_each(force = false, &block)
-          return iterate_data_source(&block) if custom_source
+          return iterate_custom_source(&block) if custom_source
 
           batch_offset = 0
 
@@ -34,7 +34,6 @@ module Ruby
                            custom_source.size
                          else
                            query.request_count
-                           # expects Integer, like connection.execute(count_sql)[0]['count'].to_i
                          end
         end
       end

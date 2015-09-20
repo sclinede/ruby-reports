@@ -19,14 +19,13 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'rake'
   spec.add_runtime_dependency 'iron-dsl'
   spec.add_runtime_dependency 'attr_extras'
   spec.add_runtime_dependency 'facets'
 
+  spec.add_development_dependency 'rake'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-debugger'
-  spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '>= 2.14.0'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'timecop', '~> 0.7.1'

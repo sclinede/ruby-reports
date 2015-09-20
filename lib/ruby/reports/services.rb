@@ -1,0 +1,5 @@
+require 'ruby/reports/services/data_iterator'
+require 'ruby/reports/services/events_handler'
+require 'ruby/reports/services/filename_generator'
+require 'ruby/reports/services/query_builder'
+require 'ruby/reports/services/table_builder'

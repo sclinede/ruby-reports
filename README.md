@@ -1,6 +1,24 @@
 # Ruby::Reports
 
-This gem was written for report automation provided by DSL.
+This gem was written for report automation provided by DSL. See [Usage](#usage) for details
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'ruby-reports'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install ruby-reports
+
+## Usage <a id="usage"></a>
 
 Main concept is following:
 - You have report class where you define attributes, column names and mapped to them
@@ -64,26 +82,6 @@ Example:
   # => "ID;User Name;Email;Last Seen\r\n1;user#1;mailto:user1@reports.org;06.06.2015\r\n
   # 2;user#2;mailto:user2@reports.org;07.02.2015\r\n3;user#3;mailto:user3@reports.org;13.08.2015\r\n"
 ```
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'ruby-reports'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install ruby-reports
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 

@@ -123,7 +123,7 @@ describe 'Ruby::Reports::CsvReport successor' do
     context 'when report was built' do
       subject { MyCsvReport.new('was built test') }
 
-      after { subject.build true }
+      before { subject.build true }
 
       it { expect(subject).to be_exists }
       it do

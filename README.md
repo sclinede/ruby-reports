@@ -1,4 +1,4 @@
-# Ruby::Reports [![Build Status](https://travis-ci.org/sclinede/ruby-reports.svg)](https://travis-ci.org/sclinede/ruby-reports)
+# Ruby::Reports [![Build Status](https://travis-ci.org/sclinede/ruby-reports.svg)](https://travis-ci.org/sclinede/ruby-reports) [![Code Climate](https://codeclimate.com/github/sclinede/ruby-reports/badges/gpa.svg)](https://codeclimate.com/github/sclinede/ruby-reports) [![Test Coverage](https://codeclimate.com/github/sclinede/ruby-reports/badges/coverage.svg)](https://codeclimate.com/github/sclinede/ruby-reports/coverage)
 
 This gem was written for report automation provided by DSL. See [Usage](#usage) for details
 

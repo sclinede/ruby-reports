@@ -1,4 +1,4 @@
-# Ruby::Reports
+# Ruby::Reports [![Build Status](https://travis-ci.org/sclinede/ruby-reports.svg)](https://travis-ci.org/sclinede/ruby-reports)
 
 This gem was written for report automation provided by DSL. See [Usage](#usage) for details
 

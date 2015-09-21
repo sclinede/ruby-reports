@@ -68,7 +68,7 @@ describe 'Ruby::Reports::BaseReport successor' do
   let(:dummy) { Hash.new }
 
   describe '#extension' do
-    before { allow(File).to receive(:exists?).and_return(true) }
+    before { my_report.build }
 
     it { expect(File.extname(my_report.filename)).to eq '.type' }
   end

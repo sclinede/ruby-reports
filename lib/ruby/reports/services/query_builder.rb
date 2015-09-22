@@ -3,14 +3,14 @@ module Ruby
     module Services
       class QueryBuilder
         extend Forwardable
-        pattr_initialize :report
+        pattr_initialize :report, :config
 
         def request_count
           execute(count)[0]['count'].to_i
         end
 
         def request_batch(offset)
-          execute take_batch(report.config.batch_size, offset)
+          execute take_batch(config.batch_size, offset)
         end
 
         private
@@ -77,10 +77,9 @@ module Ruby
         # Internal: Порядок строк отчета
         #
         # Returns String (SQL)
-        def order
+        def order_by
           nil
         end
-        alias_method :order_by, :order
 
         # Internal: Фильтры отчета
         #
@@ -105,7 +104,7 @@ module Ruby
           query.project(Arel.sql(select))
                .take(limit)
                .skip(offset)
-               .order(order)
+               .order(order_by)
                .to_sql
         end
       end

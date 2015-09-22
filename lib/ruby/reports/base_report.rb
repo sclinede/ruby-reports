@@ -120,11 +120,15 @@ module Ruby
         @error_handle_block = block
       end
 
+      private
+
       def formatter
         nil
       end
 
-      private
+      def config
+        @config ||= Config.new(self.class.config_hash)
+      end
 
       def assign_attributes
         if args && (attrs_hash = args.first) && attrs_hash.is_a?(Hash)
@@ -142,12 +146,8 @@ module Ruby
         @iterator ||= Services::DataIterator.new(query, config)
       end
 
-      def config
-        @config ||= Config.new(self.class.config_hash)
-      end
-
       def table
-        @table ||= Services::TableBuilder.new(self, self.class.table_block, config)
+        @table ||= Services::TableBuilder.new(self, self.class.table_block, config, formatter)
       end
 
       def cache_file

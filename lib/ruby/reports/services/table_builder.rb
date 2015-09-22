@@ -11,7 +11,7 @@ module Ruby
       # Defines report table building logic
       class TableBuilder
         attr_reader :building_header
-        pattr_initialize :report, :table_block, :config do
+        pattr_initialize :report, :table_block, :config, :formatter do
           init_table
         end
 
@@ -38,6 +38,8 @@ module Ruby
           @building_header = true
           header = DslProxy.exec(self, Dummy.new, &table_block)
           @building_header = false
+
+          cleanup_header
           header
         end
 
@@ -48,12 +50,16 @@ module Ruby
         end
 
         def init_table
-          @table_header = []
-          @table_row = []
+          cleanup_header
+          cleanup_row
         end
 
         def cleanup_row
           @table_row = []
+        end
+
+        def cleanup_header
+          @table_header = []
         end
 
         def add_header_cell(column_name)
@@ -64,7 +70,7 @@ module Ruby
           column_value = @row[column_value] if column_value.is_a? Symbol
 
           if (formatter_name = options[:formatter])
-            column_value = report.formatter.send(formatter_name, column_value)
+            column_value = formatter.send(formatter_name, column_value)
           end
 
           @table_row << encoded_string(column_value)

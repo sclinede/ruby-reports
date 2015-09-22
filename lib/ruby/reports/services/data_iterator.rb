@@ -20,7 +20,7 @@ module Ruby
 
           batch_offset = 0
 
-          while (rows = query.request_batch(batch_offset)).size > 0 do
+          while (rows = query.request_batch(batch_offset)).count > 0 do
             rows.each { |row| yield row }
             batch_offset += config.batch_size
           end
@@ -31,7 +31,7 @@ module Ruby
         # Returns Fixnum
         def data_size
           @data_size ||= if custom_source
-                           custom_source.size
+                           custom_source.count
                          else
                            query.request_count
                          end

@@ -34,7 +34,7 @@ class MyCsvReport < Ruby::Reports::CsvReport
   end
 
   def query
-    @query ||= Query.new(self)
+    @query ||= Query.new(self, config)
   end
 
   class Formatter
@@ -43,8 +43,7 @@ class MyCsvReport < Ruby::Reports::CsvReport
     end
   end
 
-  class Query
-    pattr_initialize :report
+  class Query < ::Ruby::Reports::Services::QueryBuilder
     def select_data
       [{:first => :one, :second => report.main_param, :third => 3}]
     end

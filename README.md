@@ -32,8 +32,9 @@ Example:
     config(
       source: :fetch_data,
       expire_in: 15 * 60,
+      storage: Ruby::Reports::Storages::HASH,
       encoding: Ruby::Reports::CP1251,
-      directory: File.join('/home', 'my_home', 'nice_reports')
+      directory: File.join('home', 'nice_reports')
     )
 
     table do
@@ -48,7 +49,7 @@ Example:
     end
 
     def query
-      @query ||= Query.new(self)
+      @query ||= Query.new
     end
 
     class Formatter
@@ -61,7 +62,7 @@ Example:
       end
     end
 
-    class Query < Ruby::Reports::Services::QueryBuilder
+    class Query
       def fetch_data
         [
           {id: 1, username: 'user#1', email: 'user1@reports.org', last_seen_date: '2015/06/06'},

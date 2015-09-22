@@ -6,6 +6,7 @@ class MyTypeReport < Ruby::Reports::BaseReport
   def initialize(*args)
     super
     config.extension = :type
+    config.storage = Ruby::Reports::Storages::HASH
   end
 
   def write(io, force = false)

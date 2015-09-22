@@ -8,6 +8,7 @@ require 'ruby/reports/base_report'
 require 'ruby/reports/csv_report'
 require 'ruby/reports/cache_file'
 require 'ruby/reports/config'
+require 'ruby/reports/storages'
 
 require 'ruby/reports/version'
 

@@ -8,6 +8,7 @@ class MyCsvReport < Ruby::Reports::CsvReport
   config(
     queue: :csv_reports,
     source: :select_data,
+    storage: Ruby::Reports::Storages::HASH,
     encoding: 'utf-8',
     csv_options: {col_sep: ',', row_sep: "\n"},
     directory: File.join(Dir.home, '.ruby-reports')
@@ -95,6 +96,37 @@ class MyCsvExpiredReport < Ruby::Reports::CsvReport
   end
 end
 
+Person = Struct.new(:first_name, :second_name) do
+  def full_name
+    "#{first_name} #{second_name}"
+  end
+end
+
+class ReportWithObjects < Ruby::Reports::CsvReport
+  config(
+    source: :select_data,
+    storage: Ruby::Reports::Storages::OBJECT,
+    encoding: Ruby::Reports::UTF8,
+    directory: File.join(Dir.tmpdir, 'resque-reports')
+  )
+
+  table do
+    column 'First name', :first_name
+    column 'Second name', :second_name
+    column 'Full name', :full_name
+  end
+
+  def query
+    @query ||= Query.new
+  end
+
+  class Query
+    def select_data
+      [Person.new('Steve', 'Jobs')]
+    end
+  end
+end
+
 describe 'Ruby::Reports::CsvReport successor' do
   describe '.csv_options' do
     context 'when custom options not set' do
@@ -154,6 +186,18 @@ describe 'Ruby::Reports::CsvReport successor' do
           expect(subject.exists?).to be_truthy
         end
       end
+    end
+  end
+
+  context 'when report source data contains decorated objects' do
+    subject(:report) { ReportWithObjects.new }
+
+    it 'builds report with decorated object attributes' do
+      report.build(true)
+
+      report_content = File.read(report.filename)
+
+      expect(report_content).to include 'Steve;Jobs;Steve Jobs'
     end
   end
 end

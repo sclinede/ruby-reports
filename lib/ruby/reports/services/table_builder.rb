@@ -67,13 +67,24 @@ module Ruby
         end
 
         def add_row_cell(column_value, options = {})
-          column_value = @row[column_value] if column_value.is_a? Symbol
+          column_value = read_from_storage(column_value) if column_value.is_a? Symbol
 
           if (formatter_name = options[:formatter])
             column_value = formatter.send(formatter_name, column_value)
           end
 
           @table_row << encoded_string(column_value)
+        end
+
+        def read_from_storage(column)
+          case config.storage
+          when :object
+            @row.public_send(column)
+          when :hash
+            @row[column]
+          else
+            fail 'Unknown Storage set in report config'
+          end
         end
 
         class Dummy

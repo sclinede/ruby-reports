@@ -29,16 +29,17 @@ module Ruby
 
         def build_row(row)
           @row = row.is_a?(Hash) ? row.rekey! : row
-          row = DslProxy.exec(self, @row, &table_block)
+          DslProxy.exec(self, @row, &table_block)
+          row = @table_row.dup
           cleanup_row
           row
         end
 
         def build_header
           @building_header = true
-          header = DslProxy.exec(self, Dummy.new, &table_block)
+          DslProxy.exec(self, Dummy.new, &table_block)
           @building_header = false
-
+          header = @table_header.dup
           cleanup_header
           header
         end

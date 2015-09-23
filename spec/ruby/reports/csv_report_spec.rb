@@ -127,6 +127,50 @@ class ReportWithObjects < Ruby::Reports::CsvReport
   end
 end
 
+
+class MyDynamicCsvReport < Ruby::Reports::CsvReport
+  config(
+    source: :select_data,
+    storage: Ruby::Reports::Storages::HASH,
+    encoding: 'utf-8',
+    csv_options: {col_sep: ',', row_sep: "\n"},
+    directory: File.join(Dir.home, '.ruby-reports')
+  )
+
+  table do |row|
+    column 'First one', decorate_first(row[:first])
+    column 'Second', "#{row[:second]} - is second"
+    columns_list.each do |col|
+      column col.to_s, col.to_sym
+    end
+  end
+
+  class << self
+    attr_accessor :columns_list
+
+    def decorate_first(element)
+      "decorated: #{element}"
+    end
+  end
+
+  attr_reader :main_param
+  def initialize(param, cols = nil)
+    super
+    self.class.columns_list = cols || [:third]
+    @main_param = param
+  end
+
+  def query
+    @query ||= Query.new(self, config)
+  end
+
+  class Query < ::Ruby::Reports::Services::QueryBuilder
+    def select_data
+      [{:first => :one, :second => report.main_param, :third => 3}]
+    end
+  end
+end
+
 describe 'Ruby::Reports::CsvReport successor' do
   describe '.csv_options' do
     context 'when custom options not set' do
@@ -198,6 +242,19 @@ describe 'Ruby::Reports::CsvReport successor' do
       report_content = File.read(report.filename)
 
       expect(report_content).to include 'Steve;Jobs;Steve Jobs'
+    end
+  end
+
+  context 'when report built with dynamic columns' do
+    subject(:report) { MyDynamicCsvReport.new('Main param', [:third, :four]) }
+
+    it 'builds report with decorated object attributes' do
+      report.build(true)
+
+      report_content = File.read(report.filename)
+
+      expect(report_content).to include "decorated: one,Main param - is second,3,\"\"\n"
+      expect(report_content).to include "First one,Second,third,four\n"
     end
   end
 end

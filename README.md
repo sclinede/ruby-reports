@@ -84,6 +84,64 @@ Example:
   # 2;user#2;mailto:user2@reports.org;07.02.2015\r\n3;user#3;mailto:user3@reports.org;13.08.2015\r\n"
 ```
 
+### Advanced Usage
+
+Here comes example of creating report with dynamicaly defined columns list:
+
+``` ruby
+
+  class MyDynamicCsvReport < Ruby::Reports::CsvReport
+    config(
+      source: :select_data,
+      storage: Ruby::Reports::Storages::HASH,
+      encoding: 'utf-8',
+      csv_options: {col_sep: ',', row_sep: "\n"},
+      directory: File.join(Dir.home, '.ruby-reports')
+    )
+
+    table do |row|
+      column 'First one', decorate_first(row[:first])
+      column 'Second', "#{row[:second]} - is second"
+      columns_list.each do |col|
+        column col.to_s, col.to_sym
+      end
+    end
+
+    class << self
+      attr_accessor :columns_list
+
+      def decorate_first(element)
+        "decorated: #{element}"
+      end
+    end
+
+    attr_reader :main_param
+    def initialize(param, cols = nil)
+      super
+      self.class.columns_list = cols || [:third]
+      @main_param = param
+    end
+
+    def query
+      @query ||= Query.new(self, config)
+    end
+
+    class Query < ::Ruby::Reports::Services::QueryBuilder
+      def select_data
+        [{:first => :one, :second => report.main_param, :third => 3}]
+      end
+    end
+  end
+
+  > report = MyDynamicCsvReport.build('Main param', [:third, :four])
+  # => #<MyDynamicCsvReport:0x00000002171a68 ...>
+  > report.ready?
+  # => true
+  > IO.read(report.filename)
+  # => "First one,Second,third,four\ndecorated: one,Main param - is second,3,\"\"\n"
+
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
